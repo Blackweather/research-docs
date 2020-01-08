@@ -1,0 +1,28 @@
+site_name: Research docs
+dev_addr: '0.0.0.0:8000'
+theme:
+  name: 'readthedocs'
+nav:
+- Home: index.md
+- DevOps:
+  - 'CI/CD':
+    - 'Implementing a Full CI/CD Pipeline - Linux Academy': 'devops/cicd/fullcicdpipe.md'
+  - 'Cloud':
+    - 'Azure Concepts - Linux Academy': 'devops/cloud/azureconcepts.md'
+    - 'Intro: Network Service Mesh (NSM)': 'devops/cloud/servicemesh_intro.md'
+    - 'Microsoft Azure Infrastructure and Deployment - Exam AZ-100 - Linux Academy': 'devops/cloud/azure_az100.md'
+    - 'The Cloud Report 03/19': 'devops/cloud/cloudreport0319.md'
+  - 'Conferences and Meetups':
+    - 'SysOps/DevOps Polska':
+      - "SysOps/DevOps Gdansk MeetUp #11": 'devops/conferences/sysopsdevops/sodo071119.md'
+  - Kubernetes:
+    - 'Google Kubernetes Engine Deep Dive - Linux Academy': 'devops/kubernetes/gke-deepdive.md'
+    - 'Kubernetes essentials - Linux Academy': 'devops/kubernetes/k8s-essentials.md'
+    - 'Kubernetes Up and Running': 'devops/kubernetes/kuard.md'
+    - 'Monitoring Kubernetes With Prometheus - Linux Academy': 'devops/kubernetes/kube-prom.md'
+  - 'Vulnerability Scanning':
+    - SonarQube:
+      - '.NET Core scanning': 'devops/vulnerabilityscanning/sonarqube/dotnet.md'
+- Networking:
+  - 'Conferences and Meetups':
+    - 'Practical vulnerability detection methods in web applications - workshop': 'networking/conferences/security_workshop_091119.md'
