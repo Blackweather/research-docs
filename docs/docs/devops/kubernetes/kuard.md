@@ -48,3 +48,10 @@
 ### Ingress and Namespaces
 - Ingress object can only refer to an upstream service in the same namespace
 - multiple Ingress objects in different namespaces can specify subpaths for the same hosts (the objects are merged up for controller configuration)
+
+## Autoscaling ReplicaSets
+HPA requires the presence of the **metrics-server** Pod on your cluster.
+**metrics-server** keeps track of metrics and provides an API for consuming metrcis that HPA uses when making scaling decisions.
+
+- vertical pod autoscaling is not currently implemented in Kubernetes
+- many solutions also enable cluster autoscaling
