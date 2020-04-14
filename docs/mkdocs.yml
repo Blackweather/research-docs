@@ -28,8 +28,10 @@ nav:
     - SonarQube:
       - '.NET Core scanning': 'devops/vulnerabilityscanning/sonarqube/dotnet.md'
 - Networking:
-  - 'Linux Foundation Cert Prep: Network Security - LinkedIn Learning': 'networking/networksecurityprep.md'
   - 'Networking Foundations: Networking Basics - LinkedIn Learning': 'networking/networkfoundations.md'
   - 'Practical Software-Defined Networking - LinkedIn Learning': 'networking/practicalsdn.md'
+- Security:
+  - 'Linux Foundation Cert Prep: Network Security - LinkedIn Learning': 'security/networksecurityprep.md'
+  - 'OAuth and OpenID Connect': 'security/oauthoidc.md'
   - 'Conferences and Meetups':
-    - 'Practical vulnerability detection methods in web applications - workshop': 'networking/conferences/security_workshop_091119.md'
+    - 'Practical vulnerability detection methods in web applications - workshop': 'security/conferences/security_workshop_091119.md'
