@@ -12,8 +12,10 @@ nav:
     - 'Azure Concepts - Linux Academy': 'devops/cloud/azureconcepts.md'
     - 'Intro: Network Service Mesh (NSM)': 'devops/cloud/servicemesh_intro.md'
     - 'Microsoft Azure Infrastructure and Deployment - Exam AZ-100 - Linux Academy': 'devops/cloud/azure_az100.md'
+    - 'OpenStack Essentials - Linux Academy': 'devops/cloud/openstackessentials.md'
     - 'The Cloud Report 03/19': 'devops/cloud/cloudreport0319.md'
   - 'Conferences and Meetups':
+    - 'Kubernights #1': 'devops/conferences/kubernights1.md'
     - 'SysOps/DevOps Polska':
       - "SysOps/DevOps Gdansk MeetUp #11": 'devops/conferences/sysopsdevops/sodo071119.md'
       - "SysOps/DevOps Gdansk MeetUp #12": 'devops/conferences/sysopsdevops/sodo160120.md'
@@ -27,5 +29,7 @@ nav:
       - '.NET Core scanning': 'devops/vulnerabilityscanning/sonarqube/dotnet.md'
 - Networking:
   - 'Linux Foundation Cert Prep: Network Security - LinkedIn Learning': 'networking/networksecurityprep.md'
+  - 'Networking Foundations: Networking Basics - LinkedIn Learning': 'networking/networkfoundations.md'
+  - 'Practical Software-Defined Networking - LinkedIn Learning': 'networking/practicalsdn.md'
   - 'Conferences and Meetups':
     - 'Practical vulnerability detection methods in web applications - workshop': 'networking/conferences/security_workshop_091119.md'

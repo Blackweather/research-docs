@@ -48,7 +48,6 @@
 
 `ufw status` - check if active + rules
 `ufw enable` - activate the firewall
-
 `ufw allow 22/tcp` - allow access to ssh
 
 Result:
