@@ -5,6 +5,7 @@ theme:
 nav:
 - Home: index.md
 - DevOps:
+  - 'OpsCentric DevOps Course': 'devops/opscentric.md'
   - 'CI/CD':
     - 'Implementing a Full CI/CD Pipeline - Linux Academy': 'devops/cicd/fullcicdpipe.md'
   - 'Cloud':
