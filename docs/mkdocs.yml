@@ -11,6 +11,7 @@ nav:
   - 'Cloud':
     - 'Amazon Virtual Private Cloud (VPC)': 'devops/cloud/aws_vpc.md'
     - 'Azure Concepts - Linux Academy': 'devops/cloud/azureconcepts.md'
+    - 'Google Cloud Essentials - Linux Academy': 'devops/cloud/gcpcessentials.md'
     - 'Intro: Network Service Mesh (NSM)': 'devops/cloud/servicemesh_intro.md'
     - 'Microsoft Azure Infrastructure and Deployment - Exam AZ-100 - Linux Academy': 'devops/cloud/azure_az100.md'
     - 'OpenStack Essentials - Linux Academy': 'devops/cloud/openstackessentials.md'
@@ -30,9 +31,12 @@ nav:
       - '.NET Core scanning': 'devops/vulnerabilityscanning/sonarqube/dotnet.md'
 - Networking:
   - 'Networking Foundations: Networking Basics - LinkedIn Learning': 'networking/networkfoundations.md'
+  - 'Nginx Web Server Deep Dive - Linux Academy': 'networking/nginxdeepdive.md'
   - 'Practical Software-Defined Networking - LinkedIn Learning': 'networking/practicalsdn.md'
-- Security:
-  - 'Linux Foundation Cert Prep: Network Security - LinkedIn Learning': 'security/networksecurityprep.md'
-  - 'OAuth and OpenID Connect': 'security/oauthoidc.md'
-  - 'Conferences and Meetups':
-    - 'Practical vulnerability detection methods in web applications - workshop': 'security/conferences/security_workshop_091119.md'
+  - Random:
+    - 'Game Theory - Coursera': 'random/gametheory.md'
+  - Security:
+    - 'Linux Foundation Cert Prep: Network Security - LinkedIn Learning': 'security/networksecurityprep.md'
+    - 'OAuth and OpenID Connect': 'security/oauthoidc.md'
+    - 'Conferences and Meetups':
+      - 'Practical vulnerability detection methods in web applications - workshop': 'security/conferences/security_workshop_091119.md'

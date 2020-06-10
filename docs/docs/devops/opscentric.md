@@ -20,3 +20,25 @@ At its core DevOps is really about breaking down the barriers that traditionally
     - what is slowing down productivity
 - does not require a management job title to be impactful
     - often better results by working with the team
+
+
+# OpsCentric DevOps Course: Lesson Two
+## Creating effective continuous improvement
+- choose the right source of feedback
+    - wrong source of feedback can make things worse with every iteration
+
+## DevOps Pipelines
+- a pipeline - set of actions and measurements which accomplish a goal
+- most useful pipelines:
+    - Continuous Integration (CI)
+        - at the most basic level integrates new versions of code into the software and provides a testable version with that new code
+        - ideally tests are automated and can be run with each new build
+    - Continuous Deployment (CD)
+        - takes the CI pipeline to the next level
+        - should be the ultimate goal of any DevOps enabled team
+        - deploys the new code to a production server or environment
+            - if no test failures are detected
+        - completely eliminate human error and manual steps from the deployment pipeline
+- autoscaling pipeline
+    - takes in usage and performance data from servers and applications and perform scaling actions based on that data
+    - for example based on server CPU utilisation metric

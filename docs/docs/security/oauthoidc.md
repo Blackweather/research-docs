@@ -141,3 +141,23 @@
 - choose the right grant type
 - validate your tokens
 - secure your tokens
+
+## Role-based Access Control vs Attribute-based Access Control
+<table>
+    <tr>
+        <th>Role-based Access Control (RBAC)</th>
+        <th>Attribute-based Access Control (ABAC)</th>
+    </tr>
+    <tr>
+        <td>Access rights granted through predefined roles</td>
+        <td>Access rights granted through policies</td>
+    </tr>
+    <tr>
+        <td>Each role carries a set of privileges</td>
+        <td>A policy combines a set of attributes (claims) together</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Allows much more complex rules than RBAC</td>
+    </tr>
+</table>
