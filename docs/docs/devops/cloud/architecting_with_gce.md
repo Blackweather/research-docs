@@ -453,3 +453,624 @@ When a VM is created, the ephemeral external IP address is assigned from a pool.
 
 ### Review - Virtual Networks
 In this module, we gave you an overview of Google's Virtual Private Cloud. We looked at the different objects within VPC, like projects, networks, IP addresses, routes, and firewall rules. We also provided a brief overview of how your network design choices can affect billing.
+
+## Virtual Machines
+VMs are the most common infrastructure components, and in Google Cloud, they're provided by Compute Engine. A VM is similar, but not identical, to a hardware computer. VMs consist of a virtual CPU, some amount of memory, disk storage, and an IP address. Compute Engine is Google Cloud's service to create VMs; it is very flexible and offers many options, including some that can't exist in physical hardware. For example, a micro VM shares a CPU with other virtual machines, so you can get VM with less capacity at a lower cost. Another example of a function that can't exist in hardware is that some VMs offer vurst capability, meaning that the virtual CPU will run above its rated capacity for a brief period, using the available shared physical CPU. The main VM options are CPUs, memory, disks, and networking.
+
+### Google Cloud compute and processing options
+<table>
+    <tr>
+        <th></th>
+        <th>Compute Engine</th>
+        <th>Kubernetes Engine</th>
+        <th>App Engine Standard</th>
+        <th>App Engine Flexible</th>
+        <th>Cloud Functions</th>
+    </tr>
+    <tr>
+        <td>Language support</td>
+        <td>Any</td>
+        <td>Any</td>
+        <td>Python, Node.js, Go, Java, PHP</td>
+        <td>Python, Node.js, Go, Java, PHP, Ruby, .NET, Custom Runtimes</td>
+        <td>Python, Node.js, Go</td>
+    </tr>
+    <tr>
+        <td>Usage model</td>
+        <td>IaaS</td>
+        <td>IaaS, PaaS</td>
+        <td>PaaS</td>
+        <td>PaaS</td>
+        <td>Microservices Architecture</td>
+    </tr>
+    <tr>
+        <td>Scaling</td>
+        <td>Server Autoscaling</td>
+        <td>Cluster</td>
+        <td>Autoscaling managed servers</td>
+        <td>Autoscaling managed servers</td>
+        <td>Serverless</td>
+    </tr>
+    <tr>
+        <td>Primary use case</td>
+        <td>General Workloads</td>
+        <td>Container workloads</td>
+        <td>Scalable web applications, Mobile backend applications</td>
+        <td>Scalable web applications, Mobile backend applications</td>
+        <td>Lightweight Event Actions</td>
+    </tr>
+</table>
+
+As mentioned in the introduction to the course, there is a spectrum of different options in Google Cloud for compute and processing. We will focus on the traditional virtual machine instances.
+Now the difference is, Compute Engine gives you the utmost in flexibility: run whatever language you want - it's your virtual machine. This is purely and infrastructure as a service or IaaS model.
+You have a VM and an operating system, and you can choose how to manage it and how to handle aspects, such as autoscaling, where you'll configure the rules about adding more virtual machines in specific situations. Autoscaling will be covered later in the course.
+The primary work case of Compute Engine is any general workload, especially an enterprise application that was designed to run on a server infrastructure. This makes Compute Engine very portable and easy to run in the cloud. Other services, like Google Kubernetes Engine, which consists of containerized workloads, may not be as easily transferable as what you're used to from on-premises.
+
+### Compute Engine
+Infrastructure as a Service (IaaS)
+
+Predefined or custom machine types:
+
+- vCPUs (cores) and memory (RAM)
+- persistent disks: HDD, SSD, and Local SSD
+- networking
+- Linux or Windows
+
+So what is Compute Engine? At its heart, it's a physical server that you're used to, running inside the Google Cloud environment, with a number of different configurations.
+Both predefined and custom machine types allows you to choose how much memory and how much CPU you want. You choose the type of disk you want, whether you want to just use standard hard drives, SSDs, local SSDs, or a mix. You can even configure the networking interfaces and run a combination of Linux and Windows machines.
+
+### Compute
+Several machine types
+
+- network throughput scales 2 Gbps per vCPU (small exceptions)
+- theoretical max of 32 Gbps with 16 vCPU or 100 Gbps with T4 or V100 GPUs
+
+A vCPU is equal to 1 hardware hyper-thread.
+
+Let's start by looking at the compute options.
+Compute Engine provides several different machine types. If those machines don't meet your needs, you can also customize your own machine.
+Your choice of CPU will affect your network throughput. Specifically, your network will scale at 2 Gbits per second for each CPU core, except for instances with 2 or 4 CPUs which receive up to 10 Gbps per second of bandwidth.
+
+As of this recording there is a theoretical maximum throughput of 32 Gbits per second for an instance with 16 or more CPUs and a 100 Gbits per second maximum throughput for specific instances that have T4 or V100 GPUs attached.
+
+When you're migrating from an on-premises setup, you're used to physical cores, which have hyperthreading. On Compute Engine, each virtual CPU (or vCPU) is implemented as a single hardware hyper-thread on one of the available CPU Platforms.
+
+### Storage
+Disks
+
+- standard, SSD, or Local SSD
+- standard and SSD PDs scale in performance for each GB of space allocated
+
+Resize disks or migrate instances with no downtime
+
+After you pick your compute options, you want to choose your disk. You have three options: Standard, SSD, or local SSD. So basically, do you want the standard spinning hard drives (HDDs), or flash memory solid-state drives (SSDs)? Both of these options provide the same amount of capacity in terms of disk size when choosing a persistent disk. Therefore, the question really is about performance versus cost, because there's a different pricing structure.
+Basically, SSDs are designed to give you a higher number of IOPS per dollar versus standard disks, which will give you a higher amount of capacity for your dollar.
+Local SSDs have even higher throughput and lower latency than SSD persistent disks, because they are attached to the physical hardware. However, the data that you store on local SSDs persists only until you stop or delete the instance. Typically, a local SSD is used as a swap disk, just like you would do if you want to create a ramdisk, but if you need more capacity, you can store those on a local SSD. You can create instances with up to eight separate 375-GB local SSD partitions for a total of 3 TB of local SSD space for each instance.
+Standard and non-local SSD disks can be sized up to 257 TB for each instance. The performance of these disks scales with each GB of space allocated.
+
+### Networking
+Robust networking features
+
+- default, custom networks
+- inbound/outbound firewall rules
+    - IP based
+    - instance/group tags
+- regional HTTPS load balancing
+- network load balancing
+    - does not require pre-warming
+- global and multi-regional subnetworks
+
+You'll also notice that you can do regional HTTPS load balancing and network load balancing. This doesn't require any pre-warming because a load balancer isn't a hardware device that needs to analyze your traffic. A load balancer is essentially a set of traffic engineering rules that are coming into the Google network, and VPC is applying your rules destined for your IP address subnet range.
+
+### VM access
+Linux: SSH
+
+- SSH from Cloud Console or CloudShell via Cloud SDK
+- SSH from computer or third-party client and generate key pair
+- requires firewall rule to allow tcp:22
+
+Windows: RDP
+- RDP clients
+- powershell terminal
+- requires setting the windows password
+- requires firewall rule to allow tcp:3389
+
+For accessing a VM, the creator of an instance has full root privileges on that instance.
+
+On a Linux instance, the creator has SSH capability and can use the Cloud Console to grant SSH capability to other users.
+
+On a Windows instance, the creator can use the Cloud Console to generate a username and password. After that, anyone who knows the username, and password can connect to the instance using a Remote Desktop Protocol, or RDP, client.
+
+### VM lifecycle
+The lifecycle of VM is represented by different statuses. We will cover this lifecycle on a high level, but we recommend returning to this diagram as a reference.
+
+When you define all the properties of an instance and click Create, the instance enters the provisioning state. Here the resources such as CPU, memory, and disks are being reserved for the instance, but the instance itself isn't running yet. Next, the instance moves to the staging state where resources have been acquired and the instance is prepared for launch. Specifically, in this state Compute Engine is adding IP addresses, booting up the system image, and booting up the system.
+
+After the instance starts running, it will go through pre-configured startup scripts and enable SSH or RDP access. Now, you can do several things while your instance is running. For example, you can live migrate your virtual machine to another host in the same zone instead of requiring your instance to be rebooted. This allows Google Cloud to perform maintenance that is integral to keeping the infrastructure protected and reliable, without interrupting any of your VMs. While your instance is running, you can also move your VM to a different zone, take a snapshot of the VM's persistent disk, export the system image, or reconfigure metadata. 
+
+Some actions require you to stop your virtual machine; for example, if you want to upgrade your machine by adding more CPU. When the instance enters this state, it will go through pre-configured shutdown scripts and end in the terminated state. From this state, you can choose to either restart the instance, which would bring it back to its provisioning state, or delete it.
+
+You also have the option to reset a VM, which is similar to pressing the reset button on your computer. This action wipes the memory contents of the machine and resets the virtual machine to its initial state. The instance remains in the running state through the reset.
+
+### Changing VM state from running
+There are different ways you can change a VM state from running. Some methods involve the Cloud Console and the gcloud command, while others are performed from the OS, such as for reboot and shutdown.
+It's important to know that if you are restarting, rebooting, stopping, or even deleting an instance, the shutdown process will take about 90 sec. For a preemptible VM, if the instance does not stop after 30 seconds, Compute Engine sends an ACPI G3 Mechanical Off signal to the operating system. Remember that when writing shutdown scripts for preemptible VMs.
+
+### Availability policy: Automatic changes
+Called "scheduling options" in SDK/API
+
+#### Automatic restart
+- automatic VM restart due to crash or maintenance event
+    - not preemptiona or a user-initiated terminate
+
+#### On host maintenance
+- determines whether host is live-migrated or terminated due to maintenance event. Live migration is the default.
+
+#### Live migration
+- during maintenance event, VM is migrated to different hardware without interruption
+- metadata indicates occurrence of live migration
+
+As we mentioned previously, Compute Engine can live migrate your virtual machines to another host due to maintenance event to prevent your applications from experiencing disruptions. A VM's availability policy determines how the instance behaves in such an event.
+The default maintenance behavior for instances is to live migrate, but you can change the behavior to terminate your instance during maintenance events instead. If your VM is terminated due to a crash or other maintenance event, your instance automatically restarts by default, but this can also be changed.
+These availability policies can be configured both during the instance creation and while an instance is running by configuring the Automatic restart and On host maintenance options.
+
+### Stopped (Terminated VM)
+No charge for stopped VM
+
+- charged for attached disks and IPs
+
+Actions
+
+- change the machine type
+- add or remove attached disks; change auto-delete settings
+- modify instance tags
+- modify custom VM or project-wide metadata
+- remove or set a new static IP
+- modify VM availability policy
+- can't change the image of a stopped VM
+
+When a VM is terminated, you do not pay for memory and CPU resources. However, you are charged for any attached disks and reserved IP addresses. In the terminated state, you can perform any of the actions listed here, such as changing the machine type, but you cannot change the image of a stopped VM.
+Also, not all of the actions listed here require you to stop a virtual machine. For example, VM availability policies can be changed while the VM is running, as discussed previously.
+
+### Creating a VM
+You have three options for creating and configuring a VM. You can use the Cloud Console as you did in the previous lab, the Cloud Shell command line, or the RESTful API. If you'd like to automate and process very complex configurations, you might want to programmatically configure these through the RESTful API by defining all the different options for your environment.
+If you plan on using the command line or RESTful API, we recommend that you first configure the instance through the Cloud Console and then ask Compute Engine for the equivalent REST request or command line. This way you avoid any typos and get dropdown lists of all the available CPU and memory options.
+
+### Machine types
+A machine type specifies a particular collection of virtualized hardware resources available to a VM instance, including the system memory size, vCPU count, and maximum persistent disk capability. Google Cloud offers several machine types that can be grouped into 2 categories:
+
+- predefined machine types: these have a fixed collection of resources, are managed by Compute Engine and are available in multiple different classes. Each class has a predefined ratio of GB of memory per vCPU. These are the:
+    - standard machine types
+    - high-memory machine types
+    - high-cpu machine types
+    - memory-optimized machine types
+    - compute-optimized machine types
+    - shared-core machine types
+- custom machine types: these let you specify the number of vCPUs and the amount of memory for your instance
+
+Let's explore each of these machine types, but remember that these machine types and their available options can change.
+
+### Standard machine types
+Standard machine types are suitable for tasks that have a balance of CPU and memory needs. Standard machine types have 3.75 GB of memory per vCPU. The vCPU configurations come in different intervals from 1 vCPU all the way to 96 vCPUs. Each of these machines supports a maximum of 128 persistent disks with a total persistent disk size of 257 TB, which is also the case for the high-memory, high-cpu, memory-optimized, and compute-optimized machine types
+
+### High-memory machine types
+High-memory machine types are ideal for tasks that require more memory relative to vCPUs. High-memory machine types have 6.50 GB of system memory per vCPU. Similarly to the standard machine types, the vCPU configurations come in different intervals from 2 vCPUs all the way to 96 vCPUs, as shown on this table.
+
+### High-CPU machine types
+High-CPU machine types are ideal for tasks that require more vCPUs relative to memory. High-CPU machine types have 0.90 GB of memory per vCPU.
+
+### Memory-optimized machine types
+Memory-optimized machine types are ideal for tasks that require intensive use of memory, with higher memory to vCPU ratios than high-memory machine types. These machine types are perfectly suited for in-memory databases and in-memory analytics, such as SAP HANA and business warehousing workloads, genomics analysis, and SQL analysis services. Memory-optimized machine types have more than 14 GB of memory per vCPU.
+
+These machines come in 4 configurations as shown in this table, with only the m1-megamem-96 currently supporting a local SSD.
+
+### Compute-optimized machine types
+Compute-optimized machine types are ideal for compute-intensive workloads. These machine types offer the highest performance per core on Compute Engine. Built on the latest generation Intel Scalable Processors (the Cascade Lake), C2 machine types offer up to 3.8 Ghz sustained all-core turbo and provide full transparency into the architecture of the underlying server platforms, enabling advanced performance tuning. C2 machine types offer much more computing power, run on a newer platform, and are generally more robust for compute-intensive workloads than the N1 high-CPU machine types.
+
+### Shared-core machine types
+Shared-core machine types provide one vCPU that is allowed to run for a portion of the time on a single hardware hyper-thread on the host CPU running your instance. Shared-core instances can be more cost-effective for running small, non-resource-intensive applications than other machine types. There are only two shared-core machine types to choose from:
+
+- f1-micro
+- g1-small
+
+f1-micro machine types offer bursting capabilities that allow instances to use additional physical CPU for short periods of time. Bursting happens automatically when your instance requires more physical CPU than originally allocated. During these spikes, your instance will opportunistically take advantage of available physical CPU in bursts. Note that bursts are not permament and are only possible periodically.
+
+### Creating custom machine types
+When to select custom:
+
+- requirements fit between the predefined types
+- need more memory or more CPU
+
+Customize the amount of memory and vCPU for your machine:
+
+- either 1 vCPU or even number of vCPU
+- 0.9 GB per vCPU, up to 6.5 GB per vCPU (default)
+- total memory must be multiple of 256 MB
+
+If none of the predefined machine types match your needs, you can independently specify the number of vCPUs and the amount of memory for your instance. Custom machine types are ideal for the following scenarios:
+
+- when you have workloads that are not a good fit for the predefined machine types that are available to you
+- or when you have workloads that require more processing power or more memory, but don't need all of the upgrades that are provided by the next larger predefined machine type.
+
+It costs slightly more to use a custom machine type than an equivalent predefined machine type, and there are still limitations in the amount of memory and vCPUs you can select:
+
+- only machine types with 1vCPU or an even number of vCPUs can be created
+- memory must be between 0.9 GB and 6.5 GB per vCPU (by default)
+- the total memory of the instance must be multiple of 256 MB
+
+By default, a custom machine can have up to 6.5 GB of memory per vCPU. However, this might not be enough memory for your workload. At an additional cost, you can get more memory per vCPU beyond the 6.5 GB limit. This is referred to as extended memory.
+
+### Choosing region and zone
+The first thing you want to consider when choosing a region and zone is the geographical location in which you want to run your resources. 
+
+Each zone supports a combination of Ivy Bridge, Sandy Bridge, Haswell, Broadwell, and Skylake platforms. When you create an instance in the zone, your instance will use the default processor supported in that zone. For example, if you create an instance in the us-central1-a zone, your instance will use a Sandy Bridge processor.
+
+### Pricing
+- per-second billing, with minimum of 1 minute
+    - vCPUs, GPUs, and GB of memory
+- resource-based pricing
+    - each vCPU and each GB of memory is billed separately
+- discounts
+    - sustained use
+    - commited use
+    - preemptible VM instances
+- recommendation engine
+    - notifies you of underutilized instances
+- free usage limits
+
+Google Cloud offers a variety of different options to keep the prices low for Compute Engine resources:
+
+All vCPUs, GPUs, and GB of memory are charged a minimum of 1 minute. For example, if you run your virtual machine for 30 seconds, you will be billed for 1 minute of usage. After 1 minute, instances are charged in 1-second increments.
+
+Compute Engine uses a resource-based pricing model, where each vCPU and each GB of memory on Compute Engine is billed separately, rather than as part of a single machine type. You still creeate iknstances using predefined machine types, but your bill reports them as individual vCPUs and memory used.
+
+There are several discounts available but the discount types cannot be combined:
+
+- resource-based pricing allows Compute Engine to apply sustained use discounts to all of your predefined machine type usage in a region collectively rather than to individual machine types
+- if your workload is stable and predictable, you can purchase a specific amount of vCPUs and memory for a discount off of normal prices in return for committing to a usage term of 1 year or 3 years. The discount is up to 57% for most machine types or custom machine types. The discount is up to 70% for memory-optimized machine types.
+- a preemptible VM is an instance that you can create and run at a much lower price than normal instances. However, Compute Engine might terminate (or preempt) these instances if it requires access to those resources for other tasks. Preemptible instances are excess Compute Engine capacity so their availability varies with usage.
+
+The ability to customize the amount of memory and CPU through custom machine types allows for further pricing customization. Speaking of sizing your machine, Compute Engine provides VM sizing recommendations to help you optimize the resource use of your virtual machine instances. When you create a new instance, recommendations for the new instance will appear 24 hours after the instance has been created.
+
+### Sustained use discounts
+Sustained use discounts are automatic discounts that you get for running specific Compute Engine resources (vCPUs, memory, GPU devices) for a significant portion of the billing month. For example, when you run one of these resources for more than 25% of the month. Compute Engine automatically gives you a discount for every incremental minute you use for that instance. The discount increases with usage, and you can get up to a 30% net discount for instances that run the entire month.
+
+This table shown on the slide describes the discount you get at each usage level of a VM instance. To take advantage of the full 30% discount, create your VM instances on the first day of the month, because discounts reset at the beginning of each month.
+
+The graph on this slide demonstrates how your effective discount increases with use. For example, if you use a virtual machine for 50% of the month, you get an effective discount of 20%. If you use it for 100% of the month, you get an effective discount of 30%.
+
+Compute Engine calculates sustained use discounts based on vCPU and memory usage across each region and separately for each of the following categories:
+
+- predefined machine types
+- custom machine type
+
+### Sustained use discounts (example)
+Let's go through an example where you have two instances that are in the same region but have different machine types and run at different times of the month. Compute Engine breaks down the number of vCPUs and amount of memory used across all instances that use predefined machine types and combines the resources to qualify for the largest sustained usage discounts possible. As shown on this slide, you run the following two instances in the us-central1 region during a month:
+
+- for the first half of the month, you run an n1-standard-4 instance with 4 vCPUs and 15 GB of memory
+- for the second half of the month, you run a larger n1-standard-16 instance with 16 vCPUs and 60 GB of memory
+
+In this scenario, Compute Engine reorganizes these machine types into individual vCPUs and memory resources and combines their usage to create the following resources, as shown on the bottom:
+
+- 4 vCPUs and 15 GB of memory for a full month
+- 12 vCPUs and 45 GB of memory for half of the month
+
+### Preemptible
+- lower price for interrupted service (up to 80%)
+- VM might be terminated at any time
+    - no charge if terminated in the first 10 minutes
+    - 24 hours max
+    - 30-second terminate warning, but not guaranteed
+        - time for a shutdown script
+- no live migrate: no auto restart
+- you can request that CPU quota for a region be split between regular and preemption
+    - default: preemptible VMs count against region CPU quota
+
+As we mentioned earlier, a preemptible VM is an instance that you can create and run at a much lower price than normal instances. See whether you can make your application function completely on preemptible VMs, because an 80-percent discount is a significant investment in your application.
+
+Now, just to reiterate, these VMs might be preempted at any time, and there is no charge if that happens within the first 10 minutes. Also, preemptible VMs are only going to live for up to 24 hours, and you only get a 30-second notification before the machine is preempted. It's also worth noting that there are no live migrations nor automatic restarts in preemptible VMs, but something that we will highlight is that you can actually create monitoring and load balancers that can start up new preemptible VMs in case of a failure. In other words, there are external ways to keep restarting preemptible VMs if you need to.
+
+One major use case for preemptible VMs is running a batch processing job. If some of those instances terminate during processing, the job slows but does not completely stop. Therefore, preemptible instances complete your batch processing tasks without placing additional workload on your existing instances, and without requiring you to pay full price for additional normal instances.
+
+### Sole-tenant nodes physically isolate workloads
+If you have workloads that require physical isolation from other workloads or virtual machines in order to meet compliance requirements, you want to consider sole-tenant nodes.
+
+A sole-tenant node is a physical Compute Engine server that is dedicated to hosting VM instances only for your specific project. Use sole-tenant nodes to keep your instances physically separated from instances in other projects, or to group your instances together on the same host hardware, for example if you have a payment processing workload that needs to be isolated to meet compliance requirements.
+
+The diagram on the left shows a normal host with multiple VM instances from multiple customers. A sole tenant node as shown on the right also has multiple VM instances, but they all belong to the same project. Currently, the only available node type can accommodate VM instances up to 96 vCPUs and 624 GB of memory. You can also fill the node with multiple smaller VM instances of various sizes, including custom machine types and instances with extended memory. Also, if you have existing operating system licenses, you can bring them to Compute Engine using sole-tenant nodes while minimizing physical core usage with the in-place restart feature.
+
+### Shielded VMs offer verifiable integrity
+- secure boot
+- virtual trusted platform module (vTPM)
+- integrity monitoring
+
+Another compute option is to create shielded VMs. Shielded VMs offer verifiable integrity of your VM instances, so you can be confident that your instances haven't been compromised by boot- or kernel-level malware or rootkits. Shielded VM's verifiable integrity is achieved through the use of Secure Boot, virtual trusted platform module or vTPM-enabled Measured Boot, and integrity monitoring.
+
+Shielded VMs is the first offering in the Shielded Cloud initiative. The Shielded Cloud initiative is meant to provide an even more secure foundation for all of Google Cloud by providing verifiable integrity and offering features, like vTPM shielding or sealing, that help prevent data exfiltration.
+
+In order to use these shielded VM features, you need to select a shielded image.
+
+### What's an image
+When creating a virtual image, you can choose the boot disk image. This image includes the boot loader, the operating system, the file system structure, any pre-configured software, and any other customizations.
+
+### Images
+- public base images
+    - Google, third-party vendors, and community: Premium images (p)
+    - Linux
+        - CentOS, CoreOS, Debian, RHEL(p), Ubuntu, openSUSE, and FreeBSD
+    - Windows
+        - Windows Server 2019(p), 2016(p), 2012-r2(p)
+        - SQL Server pre-installed on Windows(p)
+- custom images
+    - create new image from VM: pre-configured and installed SW
+    - import from on-prem, workstation, or another cloud
+    - management features: image sharing, image family, deprecation
+
+You can select either a public or custom image.
+As you saw in the previous lab, you can choose from both Linux and Windows images. Some of these images are premium images, as indicated in parentheses with a p. These images will have per-second charges after a 1-minute minimum, with the exception of SQL Server images, which are charged per minute after a 10-minute minimum. Premium image prices vary with the machine type. However, these prices are global and do not vary by region or zone.
+
+You can also use custom images. For example, you can create and use a custom image by pre-installing software that's been authorized for your particular organization.
+You also have the option of importing images from your own premises or workstation, or from another cloud provider. This is a no-cost service that is as simple as installing an agent, and we highly recommend that you look at it. You can also share custom images with anybody in your project or among other projects, too.
+
+### Boot disk
+- VM comes with a single root persistent disk
+- image is loaded onto root disk during first boot:
+    - bootable: you can attach to a VM and boot from it
+    - durable: can survive VM terminate
+- some OS images are customized for Compute Engine
+- can survive VM deletion if "Delete boot disk when instance is deleted" is disabled
+
+Every single VM comes with a single root persistent disk, because you're choosing a base image to have that loaded on.
+This image is bootable in that you can attach it to a VM and boot from it, and it is durable in that it can survive if the VM terminates. To have a boot disk survive a VM deletion, you need to disable the "Delete boot disk when instance is deleted" option in the instance's properties.
+As we discussed earlier, there are different types of disks. Let's explore these in more detail.
+
+### Persistent disks
+Network storage appearing as block device
+
+- attached to a VM through the network interface
+- durable storage: can survive VM termination
+- bootable: you can attach to a VM and boot from it
+- snapshots: incremental backups
+- performance: scales with size
+
+Features
+
+- HDD (magnetic) or SSD (faster, solid-state) options
+- disk resizing: even running and attached
+- can be attached in read-only mode to multiple VMs
+- encryption keys:
+    - Google-managed
+    - Customer-managed
+    - Customer-supplied
+
+The first disk that we create is what we call a persistent disk. That means it's going to be attached to the VM through the network interface. Even though it's persistent, it's not physically attached to the machine. This separation of disk and compute allows the disk to survive if the VM terminates. You can also perform snapshots of these disks, which are incremental backups that we'll discuss later.
+The choice between HDD and SSD disks comes down to cost and performance. 
+
+Another cool feature of persistent disks is that you can dynamically resize them, even while they are running and attached to a VM. 
+You can also attach a disk in read-only mode to multiple VMs. This allows you to share static data between multiple instances, which is cheaper than replicating your data to unique disks for individual instances.
+
+By default, Compute Engine encrypts all data at rest. Google Cloud handles and manages this encryption for your without any additional actions on your part. However, if you wanted to control and manage this encryption yourself, you can either use Cloud Key Management Service to create and manage key encryption keys (which is known as customer-managed encryption keys) or create and manage your own encryption keys (known as customer-supplied encryption keys).
+
+### Local SSD disks are physically attached to a VM
+- more IOPS, lower latency, and higher throughput than persistent disk
+- 375-GB disk up to eight, total of 3 TB
+- data survives a reset, but not a VM stop or terminate
+- VM-specific: cannot be reattached to a different VM
+
+Now, local SSDs are different from persistent disks in that they are physically attached to the virtual machine. Therefore, these disks are ephemeral but provide very high IOPS.
+
+Currently, you can attach up to 8 disks with 375 GB each, resulting in a total of 3 TB.
+Data on these disks will survive a reset but no a VM stop or terminate, because these disks can't be reattached to a different VM.
+
+### RAM disk
+- tmpfs
+- faster than local disk, slower than memory
+    - use when your application expects a file system structure and cannot directly store its data in memory
+    - fast scratch disk, or fast cache
+- very volatile; erase on stop or restart
+- may need a larger machine type if RAM was sized for the application
+- consider using a persistent disk to back up RAM disk data
+
+You also have the option of using a RAM disk.
+You can simply use tmpfs if you want to store data in memory. This will be the fastest type of performance available if you need small data structures. We recommend a high-memory virtual machine if you need to take advantage of such features, along with a persistent disk to back up the RAM disk data.
+
+### Summary of disk options
+<table>
+    <tr>
+        <th></th>
+        <th>Persistent disk HDD</th>
+        <th>Persistent disk SSD</th>
+        <th>Local SSD disk</th>
+        <th>RAM disk</th>
+    </tr>
+    <tr>
+        <th>Data redundancy</th>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+    <tr>
+        <th>Encryption at rest</th>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+        <th>Snapshotting</th>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+    <tr>
+        <th>Bootable</th>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Not</td>
+    </tr>
+    <tr>
+        <th>Use case</th>
+        <td>General, bulk file storage</td>
+        <td>Very random IOPS</td>
+        <td>High IOPS and low latency</td>
+        <td>low latency and risk of data loss</td>
+    </tr>
+</table>
+
+In summary, you have several different disk options. Persistent disks can be rebooted and snapshotted, but local SSDs and RAM disks are ephemeral.
+We recommend chossing a persistent HDD disk when you don't need performance but just need capacity. If you have high performance needs, start looking at the SSD options. The persistent disks offer data redundancy because the data on each persistent disk is distributed across several physical disks.
+Local SSDs provide even higher performance, but without the data redundancy.
+Finally, RAM disks are very volatile, but they provide the highest performance.
+
+### Maximum persistent disks
+Now, just as there is a limit on how many Local SSDs you can attach to a VM, there is also a limit on how many persistent disks you can attach to a VM. This limit depends on the machine type. For the Shared-core machine type, you can attach up to 16 disks. For the Standard, High Memory, High-CPU, Memory-optimized, and Compute-optimized machine types, you can attach up to 128 disks. So you can create massive amounts of capacity for a single host.
+
+Now remember that little nuance when we told you about how throughput is limited by the number of cores that you have? That throughput also shares the same bandwidth with Disk IO. So if you plan on having a large amount of Disk IO throughput, it will also compete with any network egress or ingress throughput. So remember that, especially if you will be increasing the number of drives attached to a virtual machine.
+
+### Persistent disk management differences
+Cloud Persistent Disk
+
+- single file system is best
+- resize (grow) disks
+- resize file system
+- built-in snapshot service
+- automatic encryption
+
+Computer Hardware Disk
+
+- partitioning
+- repartition disk
+- reformat
+- redundant disk arrays
+- subvolume management and snapshots
+- encrypt files before write to disk
+
+There are many differences between a physical hard disk in a computer and a persistent disk, which is essentially a virtual networked device.
+First of all, if you remember with normal computer hardware disks, you have to partition them. Essentially, you have a drive and you're carving up a section for the operating system to get its own capacity. If you want to grow it, you have to repartition, and if you want to make changes you might even have to reformat. If you want redundancy, you might create a redundant disk array, and if you want encryption, you need to encrypt files before writing them to the disk.
+With cloud persistent disks, things are vewry different because all that management is handled for you on the backend. You can simply grow disks and resize the file system, because disks are virtual networked devices. Redundancy and snapshot services are built in and disks are automatically encrypted. You can even use your own keys, and that will ensure that no party can get to the data except you.
+
+### Metadata and scripts
+Every VM instance stores its metadata on a metadata server. The metadata server is particularly useful in combination with startup and shutdown scripts, because you can use the metadata server to programmatically get unique information about an instance, without additional authorization. For example, you can write a startup script that gets the metadata key/value pair for an instance's external IP address and use that IP address in your script to set up a database. Because the default metadata keys are the same on every instance, you can reuse your script without having to update it for each instance. This helps you create less brittle code for your applications.
+
+Storing and retrieving instance metadata is a very common Compute Engine action.
+We recommend storing the startup and shutdown scripts in Cloud Storage.
+
+### Move an instance to a new zone
+Another common action is to move an instance to a new zone. For example, you might do so for geographical reasons or because a zone is being deprecated.
+
+- Automated process (moving within region):
+    - `gcloud compute instances move`
+    - update references to VM; not automatic
+- manual process (moving between region)
+    - snapshot all persistent disks on the source VM
+    - create new persistent disks in destination zone restored from snapshots
+    - create new VM in the destination zone and attach new persistent disks
+    - assign static IP to new VM
+    - update references to VM
+    - delete the snapshots, original disks, and original VM
+
+If you move your instance within the same region, you can automate the move by using the `gcloud compute instances move` command.
+If you move your instance to a different region, you need to manually do so by following the process outlined here. This involves making a snapshot of all persistent disks and creating new disks in the destination zone from that snapshot. Next, you create the new VM in the destination zone and attach the new persistent disks, assign a static IP, and update any references to the VM. Finally, you delete the original VM, its disks, and the snapshot.
+
+### Snapshot: back up critical data
+Snapshots have many use cases. For example, they can be used to back up critical data into a durable storage solution to meet application, availability, and recovery requirements. These snapshots are stored in Cloud Storage.
+
+### Snapshot: Migrate data between zones
+Snapshots can also be used to migrate between zones. We just discussed this when going over the manual process of moving an instance between two regions, but this can also be used to simply transfer data from one zone to another. For example, you might want to minimize latency by migrating data to a drive that can be locally attached in the zone where it is used.
+
+### Snapshot: Transfer to SSD to improve performance
+Which brings me to another snapshot use case of transferring data to a different disk type. For example, if you want to improve disk performance, you could use a snapshot to transfer data from a standard HDD persistent disk to a SSD persistent disk.
+
+### Persistent disk snapshots
+- snapshot is not available for local SSD
+- creates an incremental backup to Cloud Storage.
+    - not visible in your buckets; managed by the snapshot service
+    - consider cron jobs for periodic incremental backup
+- snapshots can be restored to a new persistent disk
+    - new disk can be in another region or zone in the same project
+    - basis of VM migration: "moving" a VM to a new zone
+        - snapshot doesn't back up VM metadata, tags, etc.
+
+Now that I've covered some of the snapshot use cases, let's explore the concept of a disk snapshot.
+
+First of all, this slide is titled persistent disk snapshots, because snapshots are available only to persistent disks and not to local SSDs.
+Snapshots are different from public images and custom images, which are used primarilty to create instances or configure instance templates, in that snapshots are useful for periodic backup of the data on your persistent disks.
+
+Snapshots are incremental and automatically compressed, so you can create regular snapshots on a persistent disk faster and at a much lower cost than if your regularly created a full image of the disk.
+As we saw with the previous examples, snapshots can be restored to a new persistent disk, allowing for a move to a new zone.
+
+### Resize persistent disk
+Another common Compute Engine action is to resize your persistent disk. The added benefit of increasing storage capacity is to improve I/O performance. This can be achieved while the disk is attached to a running VM without having to create a snapshot.
+Now, while you can grow disks in size, you can never shrink them, so keep this in mind.
+
+### Which statement is true of virtual machine instances in Compute Engine?
+- In Compute Engine, a VM is a networked service that simulates the features of a computer
+
+VMs in Compute Engine are a collection of networked services. This includes disks (persistent disks) which are network-attached. In some cases, the Google Cloud VM behaves unlike hardware or other kinds of virtual machines; for example, when a multi-tenant virtual CPU "bursts", using excess capacity beyond the VM spec.
+
+### What are sustained use discounts?
+- automatic discounts that you get for running specific Compute Engine resources for a significant portion of the billing month.
+
+Sustained use discounts are automatic discounts that you get for running specific Compute Engine resources (vCPUs, memory, GPU devices) for a significant portion of the billing month. To take advantage of the full 30% discount, create your VM instances on the first day of the month, because discounts reset at the beginning of each month.
+
+### Which statement is true of persistent disks?
+- persistent disks are encrypted by default
+
+Physical Disks are not physical disks, they are a virtual-networked service. Each persistent disk remains  encrypted either with system-defined keys or with customer-supplied keys.
+
+### Review - Virtual Machines
+In this module, we covered the different compute, image, and disk options within Compute Engine, along with some common actions.
+
+Remember that there are many compute options to choose from. If a predefined machine type does not meet your needs, you can customize your own VM and you can even create a sole-tenant node. You can also install different public and custom images on the boot disks of your instances and you can attach more disks if needed.
+
+## Cloud IAM
+In this module, we cover Cloud Identity and Access Management (or Cloud IAM)
+
+Cloud IAM is a sophisticated system built on top of email-like address names, job-type roles, and granular permissions. If you're familiar with IAM from other implementations, look for the differences that Google has implemented to make IAM easier to administer and more secure.
+
+### Identity and Access Management
+So what is identity access management? It is a way of identifying who can do what on which resource.
+
+The who can be a person, group, or application. The what refers to specific privileges or actions, and the resource could be any Google Cloud service.
+
+For example, we could give you the privilege or role of Compute Viewer. This provides you with read-only access to get and list Compute Engine resources, without being able to read the data stored on them.
+
+### Cloud IAM objects
+- orgazniation
+- folders
+- projects
+- resources
+- roles
+- members
+
+Cloud IAM is composed of different objects as shown on this slide. We are going to cover each of these in this module. To get a better understanding of where these fit in, let's look at the Cloud IAM resource hierarchy.
+
+### Cloud IAM resource hierarchy
+Google Cloud resources are organized hierarchically, as shown in this tree structure.
+The Organization node is the root node in this hierarchy, folders are the children of the organization, projects are the children of the folders, and the individual resources are the children of projects. Each resource has exactly one parent.
+
+Cloud IAM allows you to set policies at all of these level, where a policy contains a set of roles and role members. Let me go through each of the levels from top to bottom, because resources inherit policies from their parent.
+
+The organization resource represents your company. Cloud IAM roles granted at this level are inherited by all resources under the organization.
+
+The folder resource could represent your department. Cloud IAM roles granted at this level are inherited by all resources that the folder contains.
+
+Projects represent a trust boundary within your company. Services within the same project have a default level of trust.
+
+The Cloud IAM policy hierarchy always follows the same path as the Google Cloud resource hierarchy, which means that if you change the resource hierarchy, the policy hierarchy also changes. For example, moving a project into a different organization will update the project's Cloud IAM policy to inherit from the new organization's Cloud IAM policy.
+
+Also, child policies cannot restrict access granted at the parent level. For example, if we grant you the Editor role for Department X, and we grant you the Viewer role at the bookshelf project level, you still have the Editor role for that project. Therefore, it is a best practice to follow the principle of least privilege. The principle applies to identities, roles, and resources. Always select the smallest scope that's necessary for the task in order to reduce your exposure to risk.
+
+### Organization node
+- an organization node is a root node for Google Cloud resources
+- organization roles:
+    - organization admin: control over all cloud resources; useful for auditing
+    - project creator: controls project creation; control over who can create projects
+
+As we mentioned earlier, the organization resource is the root node in the Google Cloud resource hierarchy. This node has many roles, like the Organization Admin. The Organization Admin provides a user like Bob with access to administer all resources belonging to his organization, which is useful for auditing. 
+There is also a Project Creator role, which allows a user like Alice to create projects within her organization. We are showing the project creator role here because it can also be applied at the organization level, which would then be inherited by all the projects within the organization.
+
+### Creating and managing organizations
